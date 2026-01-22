@@ -1,70 +1,23 @@
+import { defineConfig } from 'eslint/config';
 import eslint from '@eslint/js';
-import tseslint from '@typescript-eslint/eslint-plugin';
-import tsparser from '@typescript-eslint/parser';
-import prettier from 'eslint-plugin-prettier';
-import prettierConfig from 'eslint-config-prettier';
 import globals from 'globals';
+import jest from 'eslint-plugin-jest';
+import prettier from 'eslint-plugin-prettier/recommended';
+import tseslint from 'typescript-eslint';
 
-export default [
+export default defineConfig([
   eslint.configs.recommended,
+  ...tseslint.configs.recommended,
   {
-    files: ['**/*.ts'],
+    languageOptions: { globals: globals.node },
+  },
+  {
+    files: ['tests/**'],
+    ...jest.configs['flat/all'],
     languageOptions: {
-      parser: tsparser,
-      parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: 'module',
-        project: './tsconfig.json',
-      },
-      globals: {
-        ...globals.node,
-      },
-    },
-    plugins: {
-      '@typescript-eslint': tseslint,
-      prettier: prettier,
-    },
-    rules: {
-      ...tseslint.configs.recommended.rules,
-      ...prettierConfig.rules,
-      'prettier/prettier': 'error',
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_' },
-      ],
-      '@typescript-eslint/explicit-function-return-type': 'off',
+      parserOptions: { project: './tsconfig.json' },
     },
   },
-  {
-    files: ['**/*.test.ts', '**/*.spec.ts', 'tests/**/*.ts'],
-    languageOptions: {
-      parser: tsparser,
-      parserOptions: {
-        ecmaVersion: 2020,
-        sourceType: 'module',
-        project: './tsconfig.json',
-      },
-      globals: {
-        ...globals.node,
-        ...globals.jest,
-      },
-    },
-    plugins: {
-      '@typescript-eslint': tseslint,
-      prettier: prettier,
-    },
-    rules: {
-      ...tseslint.configs.recommended.rules,
-      ...prettierConfig.rules,
-      'prettier/prettier': 'error',
-      '@typescript-eslint/no-unused-vars': [
-        'error',
-        { argsIgnorePattern: '^_' },
-      ],
-      '@typescript-eslint/explicit-function-return-type': 'off',
-    },
-  },
-  {
-    ignores: ['dist/', 'node_modules/', '*.js', '*.mjs'],
-  },
-];
+  prettier,
+  { ignores: ['dist/'] },
+]);

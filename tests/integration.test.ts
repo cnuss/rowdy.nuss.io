@@ -1,17 +1,15 @@
+import { describe, expect, it } from '@jest/globals';
 import request from 'supertest';
 import { createApp } from '../src/app';
-import type { Express } from 'express';
 
-describe('Integration Tests', () => {
-  let app: Express;
-
-  beforeEach(() => {
-    app = createApp();
-  });
-
-  describe('GET / with Accept: text/x-shellscript', () => {
+describe('integration tests', () => {
+  describe('root', () => {
     it('should return 200', async () => {
-      const response = await request(app).get('/');
+      expect.assertions(1);
+
+      const app = createApp(),
+        response = await request(app).get('/');
+
       expect(response.status).toBe(200);
     });
   });
