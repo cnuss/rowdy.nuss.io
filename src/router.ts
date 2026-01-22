@@ -11,10 +11,12 @@ export const router = () => {
       const timeout = req.query.timeout ? Number(req.query.timeout) : 30;
 
       // Watch mode: stream newline-delimited JSON events (like K8s)
-      res.setHeader('Content-Type', 'application/json');
+      res.setHeader('Content-Type', 'application/x-ndjson');
       res.setHeader('Transfer-Encoding', 'chunked');
-      res.setHeader('Cache-Control', 'no-cache');
+      res.setHeader('Cache-Control', 'no-cache, no-store, no-transform');
       res.setHeader('Connection', 'keep-alive');
+      res.setHeader('X-Accel-Buffering', 'no'); // Disable nginx buffering
+      res.setHeader('X-Content-Type-Options', 'nosniff');
 
       // Send initial ADDED event
       const sendEvent = (type: string, object: object) => {
